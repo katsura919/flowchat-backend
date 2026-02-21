@@ -42,7 +42,11 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 // ─── API Routes ───────────────────────────────────────────────────────────────
-// app.use('/api/v1/auth', authRoutes);
+import authAdminRoutes from "./modules/auth/admin/auth-admin-route";
+import authVaRoutes from "./modules/auth/va/auth-va-route";
+
+app.use('/api/auth/admin', authAdminRoutes);
+app.use('/api/auth/va', authVaRoutes);
 
 // ─── 404 Handler ─────────────────────────────────────────────────────────────
 app.use(notFound);
