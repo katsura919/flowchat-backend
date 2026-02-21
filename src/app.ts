@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import { errorHandler, notFound } from "./middleware/errorHandler";
+import router from "./route";
 
 // ─── Route Imports ────────────────────────────────────────────────────────────
 // import authRoutes from './routes/auth.routes';
@@ -42,11 +43,7 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 // ─── API Routes ───────────────────────────────────────────────────────────────
-import authAdminRoutes from "./modules/auth/admin/auth-admin-route";
-import authVaRoutes from "./modules/auth/va/auth-va-route";
-
-app.use('/api/auth/admin', authAdminRoutes);
-app.use('/api/auth/va', authVaRoutes);
+app.use('/api', router); 
 
 // ─── 404 Handler ─────────────────────────────────────────────────────────────
 app.use(notFound);
