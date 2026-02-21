@@ -39,18 +39,31 @@ export const loginVa = async (req: Request, res: Response) => {
             return;
         }
 
-        res.json({
-            _id: va._id,
-            name: va.name,
-            email: va.email,
-            role: "va",
-            status: va.status,
-            trainingStatus: va.trainingStatus,
-            isCertified: va.isCertified,
-            token: generateToken(String(va._id)),
-        });
+        res.json({ token: generateToken(String(va._id)) });
     } catch (error) {
         console.error("VA login error:", error);
         res.status(500).json({ message: "Server error during login" });
+    }
+};
+
+export const getVaMe = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).user?.id;
+        if (!userId) {
+            res.status(401).json({ message: "Not authorized" });
+            return;
+        }
+
+        const va = await VA.findById(userId).select("-password").populate("assignedAdminId", "name email");
+
+        if (!va) {
+            res.status(404).json({ message: "VA not found" });
+            return;
+        }
+
+        res.json(va);
+    } catch (error) {
+        console.error("Get VA me error:", error);
+        res.status(500).json({ message: "Server error fetching profile" });
     }
 };

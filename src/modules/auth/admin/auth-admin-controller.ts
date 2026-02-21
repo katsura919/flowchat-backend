@@ -32,13 +32,7 @@ export const loginAdmin = async (req: Request, res: Response) => {
             return;
         }
 
-        res.json({
-            _id: admin._id,
-            name: admin.name,
-            email: admin.email,
-            role: "admin",
-            token: generateToken(String(admin._id)),
-        });
+        res.json({ token: generateToken(String(admin._id)) });
     } catch (error) {
         console.error("Admin login error:", error);
         res.status(500).json({ message: "Server error during login" });
@@ -71,18 +65,35 @@ export const registerAdmin = async (req: Request, res: Response) => {
         });
 
         if (admin) {
-            res.status(201).json({
-                _id: admin._id,
-                name: admin.name,
-                email: admin.email,
-                role: "admin",
-                token: generateToken(String(admin._id)),
-            });
+            res.status(201).json({ token: generateToken(String(admin._id)) });
         } else {
             res.status(400).json({ message: "Invalid admin data" });
         }
     } catch (error) {
         console.error("Admin registration error:", error);
         res.status(500).json({ message: "Server error during registration" });
+    }
+};
+
+export const getAdminMe = async (req: Request, res: Response) => {
+    try {
+        // Requires verifyToken middleware to populate req.user
+        const userId = (req as any).user?.id;
+        if (!userId) {
+            res.status(401).json({ message: "Not authorized" });
+            return;
+        }
+
+        const admin = await Admin.findById(userId).select("-password");
+
+        if (!admin) {
+            res.status(404).json({ message: "Admin not found" });
+            return;
+        }
+
+        res.json(admin);
+    } catch (error) {
+        console.error("Get admin me error:", error);
+        res.status(500).json({ message: "Server error fetching profile" });
     }
 };
