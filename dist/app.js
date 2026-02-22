@@ -8,6 +8,7 @@ const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
 const morgan_1 = __importDefault(require("morgan"));
 const errorHandler_1 = require("./middleware/errorHandler");
+const route_1 = __importDefault(require("./route"));
 const app = (0, express_1.default)();
 app.use((0, helmet_1.default)());
 app.use((0, cors_1.default)({
@@ -29,6 +30,7 @@ app.get("/health", (req, res) => {
         environment: process.env.NODE_ENV,
     });
 });
+app.use('/api', route_1.default);
 app.use(errorHandler_1.notFound);
 app.use(errorHandler_1.errorHandler);
 exports.default = app;
