@@ -9,7 +9,7 @@ export interface IModule {
 }
 export interface ITrainingProgress extends Document {
     vaId: mongoose.Types.ObjectId;
-    modules: IModule[];
+    modules: mongoose.Types.DocumentArray<IModule & Document>;
     completedCount: number;
     totalCount: number;
     progressPercent: number;
