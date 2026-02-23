@@ -3,6 +3,7 @@ export interface IModule {
     slug: string;
     label: string;
     group: string;
+    order: number;
     completed: boolean;
     completedAt: Date | null;
 }

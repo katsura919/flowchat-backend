@@ -33,35 +33,14 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importStar(require("mongoose"));
-const ModuleSchema = new mongoose_1.Schema({
-    slug: { type: String, required: true },
-    label: { type: String, required: true },
-    group: { type: String, required: true },
-    order: { type: Number, required: true },
-    completed: { type: Boolean, default: false },
-    completedAt: { type: Date, default: null },
-});
-const TrainingProgressSchema = new mongoose_1.Schema({
-    vaId: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: "VA",
-        required: true,
-        unique: true,
-    },
-    modules: [ModuleSchema],
-    completedCount: { type: Number, default: 0 },
-    totalCount: { type: Number, default: 17 },
-    progressPercent: { type: Number, default: 0 },
-}, { timestamps: { createdAt: false, updatedAt: true } });
-TrainingProgressSchema.pre("save", function (next) {
-    const completedModules = this.modules.filter((m) => m.completed).length;
-    this.completedCount = completedModules;
-    this.totalCount = this.modules.length || 17;
-    this.progressPercent = this.totalCount > 0
-        ? Math.round((completedModules / this.totalCount) * 100)
-        : 0;
-    next();
-});
-exports.default = mongoose_1.default.model("TrainingProgress", TrainingProgressSchema);
-//# sourceMappingURL=training-progress-schema.js.map
+const express_1 = require("express");
+const trainingController = __importStar(require("./training-controller"));
+const auth_1 = require("../../middleware/auth");
+const router = (0, express_1.Router)();
+router.use(auth_1.protect);
+router.use((0, auth_1.authorize)('va'));
+router.get("/me", trainingController.getMyTrainingProgress);
+router.patch("/me/modules/:slug", trainingController.updateModuleStatus);
+router.get("/me/certification", trainingController.getMyCertification);
+exports.default = router;
+//# sourceMappingURL=training-routes.js.map
